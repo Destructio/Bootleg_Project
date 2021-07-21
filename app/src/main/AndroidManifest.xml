@@ -14,7 +14,6 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                //Мой коммит
             </intent-filter>
         </activity>
     </application>
