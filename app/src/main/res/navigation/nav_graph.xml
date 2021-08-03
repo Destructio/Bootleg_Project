@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.example.bootlegproject.ui.signup.SignUpFragment"
+        android:label="fragment_sign_up">
+        <action
+            android:id="@+id/action_signUpFragment_to_computersListFragment"
+            app:destination="@id/computersListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.bootlegproject.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_computersListFragment"
+            app:destination="@id/computersListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/computersListFragment"
+        android:name="com.example.bootlegproject.ui.list.ComputersListFragment"
+        android:label="computers_list"
+        tools:layout="@layout/computers_list" />
+</navigation>
