@@ -1,28 +1,31 @@
-package com.example.bootlegproject.ui.login
+package com.example.bootlegproject.ui.signup
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.annotation.StringRes
-import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.annotation.StringRes
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.example.bootlegproject.databinding.FragmentLoginBinding
 import com.example.bootlegproject.R
 import com.example.bootlegproject.data.AuthRepository
 import com.example.bootlegproject.data.NetDataSource
+import com.example.bootlegproject.databinding.FragmentSignUpBinding
+import com.example.bootlegproject.ui.login.LoggedInUserView
+import com.example.bootlegproject.ui.login.LoginViewModel
 
-class LoginFragment : Fragment() {
+class RegFragment : Fragment() {
 
-    private lateinit var loginViewModel: LoginViewModel
-    private var _binding: FragmentLoginBinding? = null
+
+    private lateinit var regViewModel: RegViewModel
+    private var _binding: FragmentSignUpBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -31,28 +34,28 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        _binding = FragmentSignUpBinding.inflate(inflater, container, false)
         return binding.root
 
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
+        regViewModel = ViewModelProvider(this, SignUpViewModelFactory())
+            .get(RegViewModel::class.java)
 
         val usernameEditText = binding.username
         val passwordEditText = binding.password
-        val loginButton = binding.login
+        val regButton = binding.reg
         val loadingProgressBar = binding.loading
-        val signupTextView = binding.textView
 
-        loginViewModel.loginFormState.observe(viewLifecycleOwner,
+        regViewModel.regFormState.observe(viewLifecycleOwner,
             Observer { loginFormState ->
                 if (loginFormState == null) {
                     return@Observer
                 }
-                loginButton.isEnabled = loginFormState.isDataValid
+                regButton.isEnabled = loginFormState.isDataValid
                 loginFormState.usernameError?.let {
                     usernameEditText.error = getString(it)
                 }
@@ -61,7 +64,7 @@ class LoginFragment : Fragment() {
                 }
             })
 
-        loginViewModel.loginResult.observe(viewLifecycleOwner,
+        regViewModel.regResult.observe(viewLifecycleOwner,
             Observer { loginResult ->
                 loginResult ?: return@Observer
                 loadingProgressBar.visibility = View.GONE
@@ -81,7 +84,7 @@ class LoginFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable) {
-                loginViewModel.loginDataChanged(
+                regViewModel.regDataChanged(
                     usernameEditText.text.toString(),
                     passwordEditText.text.toString()
                 )
@@ -90,14 +93,9 @@ class LoginFragment : Fragment() {
         usernameEditText.addTextChangedListener(afterTextChangedListener)
         passwordEditText.addTextChangedListener(afterTextChangedListener)
 
-        signupTextView.setOnClickListener { view ->
-            view.findNavController()
-                .navigate(R.id.action_loginFragment_to_signUpFragment)
-        }
-
-        loginButton.setOnClickListener {
+        regButton.setOnClickListener {
             loadingProgressBar.visibility = View.VISIBLE
-            loginViewModel.login(
+            regViewModel.reg(
                 usernameEditText.text.toString(),
                 passwordEditText.text.toString()
             )
@@ -105,14 +103,14 @@ class LoginFragment : Fragment() {
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome) + model.email + "!"
+        val welcome = getString(R.string.welcome_reg) + model.email + "!"
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
 
         val bundle = Bundle()
         bundle.putString("email",binding.username.text.toString())
         view?.findNavController()
-            ?.navigate(R.id.action_loginFragment_to_computersFragment,bundle)
+            ?.navigate(R.id.action_signUpFragment_to_computersFragment,bundle)
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
@@ -125,14 +123,13 @@ class LoginFragment : Fragment() {
         _binding = null
     }
 
-
 }
-class LoginViewModelFactory : ViewModelProvider.Factory {
 
+class SignUpViewModelFactory : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            return LoginViewModel(
+        if (modelClass.isAssignableFrom(RegViewModel::class.java)) {
+            return RegViewModel(
                 authRepository = AuthRepository(
                     dataSource = NetDataSource()
                 )

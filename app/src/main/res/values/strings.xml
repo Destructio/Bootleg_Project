@@ -31,8 +31,10 @@
     <string name="prompt_email">Адрес почты</string>
     <string name="prompt_password">Пароль</string>
     <string name="action_sign_in">Войти</string>
-    <string name="welcome">"Рады видеть вас снова "</string>
+    <string name="welcome">"Рады видеть вас снова, "</string>
+    <string name="welcome_reg">"Добро пожаловать, "</string>
     <string name="invalid_username">Введите действительную почту</string>
-    <string name="invalid_password">Пароль должен состоять из 4 или более букв</string>
+    <string name="invalid_password">Пароль должен состоять из 4 или более символов</string>
     <string name="login_failed">"Аутентификация не успешна"</string>
+    <string name="reg_failed">Регистрация не успешна</string>
 </resources>

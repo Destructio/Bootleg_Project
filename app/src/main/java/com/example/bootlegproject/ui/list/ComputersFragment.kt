@@ -8,30 +8,29 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.bootlegproject.adapters.MyComputersListRecyclerViewAdapter
 import com.example.bootlegproject.R
 import com.example.bootlegproject.placeholder.PlaceholderContent
 
 /**
  * A fragment representing a list of Items.
  */
-class ComputersListFragment : Fragment() {
+class ComputersFragment : Fragment() {
 
     private var columnCount = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.let {
+        /*arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }
+        }*/
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.computers_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_computers_list, container, false)
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -40,13 +39,14 @@ class ComputersListFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyComputersListRecyclerViewAdapter(PlaceholderContent.ITEMS)
+                //TODO: change Placeholder to get Computers
+                adapter = ComputersRecyclerAdapter(PlaceholderContent.ITEMS)
             }
         }
         return view
     }
 
-    companion object {
+    /*companion object {
 
         // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
@@ -54,10 +54,10 @@ class ComputersListFragment : Fragment() {
         // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            ComputersListFragment().apply {
+            ComputersFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }
             }
-    }
+    }*/
 }

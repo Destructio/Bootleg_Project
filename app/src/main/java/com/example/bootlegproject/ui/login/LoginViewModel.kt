@@ -1,17 +1,14 @@
 package com.example.bootlegproject.ui.login
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import android.util.Patterns
-import androidx.lifecycle.viewModelScope
-import com.example.bootlegproject.data.LoginRepository
+import androidx.lifecycle.*
+import com.example.bootlegproject.data.AuthRepository
 import com.example.bootlegproject.data.Result
 
 import com.example.bootlegproject.R
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -25,12 +22,11 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     fun login(email: String, password: String) {
 
         viewModelScope.launch{
-
-            val loginJobCode = loginRepository.loginJob(email, password)
+            val loginJobCode = authRepository.loginJob(email, password)
 
             when (loginJobCode) {
                 is Result.Success -> _loginResult.value =
-                    LoginResult(success = LoggedInUserView(displayName = loginJobCode.data.displayName))
+                    LoginResult(success = LoggedInUserView(email = loginJobCode.data.email))
                 else -> _loginResult.value = LoginResult(error = R.string.login_failed)
             }
 
@@ -38,6 +34,9 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
     }
 
+    /**
+     * Probably unnecessary for the login activity
+     */
     fun loginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
             _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
@@ -49,14 +48,16 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     }
 
     private fun isUserNameValid(username: String): Boolean {
-        return if (username.contains("@")) {
+        return if (username.contains("@") and username.isNotBlank()) {
             Patterns.EMAIL_ADDRESS.matcher(username).matches()
         } else {
-            username.isNotBlank()
+            false
         }
     }
 
     private fun isPasswordValid(password: String): Boolean {
         return password.length >= 4
     }
+
+
 }

@@ -5,5 +5,5 @@ package com.example.bootlegproject.data.model
  */
 data class LoggedInUser(
     val userId: String,
-    val displayName: String
+    val email: String
 )

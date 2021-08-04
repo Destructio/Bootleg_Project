@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
  * maintains an in-memory cache of login status and user credentials information.
  */
 
-class LoginRepository(val dataSource: LoginDataSource) {
+class AuthRepository(val dataSource: NetDataSource) {
 
     var user: LoggedInUser? = null
         private set
@@ -36,6 +36,16 @@ class LoginRepository(val dataSource: LoginDataSource) {
             result
         }
     }
+    suspend fun signupJob(username: String, password: String): Result<LoggedInUser> {
+        return withContext(Dispatchers.IO) {
+            val result = dataSource.regRequest(username, password)
+            if (result is Result.Success) {
+                setLoggedInUser(result.data)
+            }
+            result
+        }
+    }
+
 
     private fun setLoggedInUser(loggedInUser: LoggedInUser) {
         this.user = loggedInUser

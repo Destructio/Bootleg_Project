@@ -19,9 +19,9 @@ object PlaceholderContent {
     /**
      * A map of sample (placeholder) items, by ID.
      */
-    private val ITEM_MAP: MutableMap<String, PlaceholderItem> = HashMap()
+    val ITEM_MAP: MutableMap<String, PlaceholderItem> = HashMap()
 
-    private val COUNT = 10
+    private val COUNT = 25
 
     init {
         // Add some sample items.
@@ -32,17 +32,17 @@ object PlaceholderContent {
 
     private fun addItem(item: PlaceholderItem) {
         ITEMS.add(item)
-        ITEM_MAP[item.id] = item
+        ITEM_MAP.put(item.id, item)
     }
 
     private fun createPlaceholderItem(position: Int): PlaceholderItem {
-        return PlaceholderItem(position.toString(), "Computer $position", makeDetails(position))
+        return PlaceholderItem(position.toString(), "Item " + position, makeDetails(position))
     }
 
     private fun makeDetails(position: Int): String {
         val builder = StringBuilder()
-        builder.append("Details about Computer: ").append(position)
-        for (i in 0 until position) {
+        builder.append("Details about Item: ").append(position)
+        for (i in 0..position - 1) {
             builder.append("\nMore details information here.")
         }
         return builder.toString()
