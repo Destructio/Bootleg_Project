@@ -4,12 +4,12 @@ import java.util.*
 
 class ComputerStatistic {
 
-    private val cpuLoad: String? = null
-    private val ramLoad: String? = null
-    private val hddLoad: String? = null
-    private val cpuTemp: String? = null
-    private val processList: LinkedList<MyProcess>? = null
-    private val computerName: String? = null
-    private val upTime: String? = null
+    val cpuLoad: String? = null
+    val ramLoad: String? = null
+    val hddLoad: String? = null
+    val cpuTemp: String? = null
+    val processList: LinkedList<MyProcess>? = null
+    val computerName: String? = null
+    val upTime: String? = null
 
 }

@@ -1,5 +1,6 @@
 package com.example.bootlegproject.data
 
+import android.util.Log
 import com.example.bootlegproject.data.model.LoggedInUser
 import java.io.IOException
 import com.example.bootlegproject.utils.WEB_IP
@@ -22,7 +23,7 @@ class NetDataSource {
         return try {
             val response = httpClient.newCall(request).execute()
             val code = response.body().string()
-
+            Log.d("-----------------", "$url ============= $code" )
             if(code.equals("true"))
                 Result.Success(LoggedInUser(java.util.UUID.randomUUID().toString(), username))
             else
@@ -45,7 +46,7 @@ class NetDataSource {
         return try {
             val response = httpClient.newCall(request).execute()
             val code = response.body().string()
-
+            Log.d("-----------------", "$url ============= $code" )
             if(code.equals("1"))
                 Result.Success(LoggedInUser(java.util.UUID.randomUUID().toString(), username))
             else
@@ -56,9 +57,9 @@ class NetDataSource {
         }
     }
 
-    fun computersRequest(email: String): Result<String> {
+    fun computersRequest(email: String): String {
 
-        val url = "http://$WEB_IP/getComputers?name=$email"
+        val url = "http://$WEB_IP/getComputers?email=$email"
 
         val httpClient = OkHttpClient()
         val request: Request = Request.Builder()
@@ -68,14 +69,14 @@ class NetDataSource {
         return try {
             val response = httpClient.newCall(request).execute()
             val code = response.body().string()
-
+            Log.d("-----------------", "$url ============= $code" )
             if(!code.equals(null))
-                Result.Success(code)
+                code
             else
-                Result.Error(Exception("Wrong computers data"))
+                Exception("Wrong computers data").toString()
 
         } catch (e: Throwable) {
-            Result.Error(IOException("Error getting computers in", e))
+            IOException("Error getting computers", e).toString()
         }
     }
 

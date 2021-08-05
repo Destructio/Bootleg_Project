@@ -1,63 +1,82 @@
 package com.example.bootlegproject.ui.list
 
 import android.os.Bundle
+import android.util.Log
+import org.koin.core.qualifier.named
+import org.koin.android.ext.android.get
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.bootlegproject.R
-import com.example.bootlegproject.placeholder.PlaceholderContent
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.bootlegproject.adapters.ComputersRecyclerAdapter
+import com.example.bootlegproject.data.AuthRepository
+import com.example.bootlegproject.data.NetDataSource
+import com.example.bootlegproject.data.model.Computer
+import com.example.bootlegproject.databinding.FragmentComputersListBinding
+import com.example.bootlegproject.ui.login.LoginViewModel
+import com.example.bootlegproject.ui.login.LoginViewModelFactory
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.koin.androidx.scope.scopeActivity
+import java.lang.reflect.Type
 
 /**
  * A fragment representing a list of Items.
  */
 class ComputersFragment : Fragment() {
 
-    private var columnCount = 1
+    private lateinit var computerListViewModel: ComputersListViewModel
+    private lateinit var binding: FragmentComputersListBinding
+    private lateinit var computersList: ArrayList<Computer>
+    private val gson: Gson = Gson()
+    private val itemsListType = object : TypeToken<java.util.ArrayList<String>>() {}.type
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
 
-        /*arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }*/
+        //computersList = gson.fromJson(getComputersJobCode.toString(), itemsListType)
+        //getComputersJobCode.await()
+
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_computers_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
+    : View {
+        computerListViewModel = ViewModelProvider(this, ComputerListViewModelFactory())
+            .get(ComputersListViewModel::class.java)
 
-        // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
-                //TODO: change Placeholder to get Computers
-                adapter = ComputersRecyclerAdapter(PlaceholderContent.ITEMS)
-            }
+        val email = arguments?.getString("email").toString()
+        computersList = computerListViewModel.getComputersList(email)
+
+        binding = FragmentComputersListBinding.inflate(layoutInflater)
+        //binding.progressBar.visibility = View.VISIBLE
+        binding.recycler.layoutManager = LinearLayoutManager(context)
+        binding.recycler.adapter = ComputersRecyclerAdapter(computersList, email)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //binding.progressBar.visibility = View.INVISIBLE
+    }
+
+}
+class ComputerListViewModelFactory : ViewModelProvider.Factory {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ComputersListViewModel::class.java)) {
+            return ComputersListViewModel() as T
         }
-        return view
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
-
-    /*companion object {
-
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
-
-        // TODO: Customize parameter initialization
-        @JvmStatic
-        fun newInstance(columnCount: Int) =
-            ComputersFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                }
-            }
-    }*/
 }

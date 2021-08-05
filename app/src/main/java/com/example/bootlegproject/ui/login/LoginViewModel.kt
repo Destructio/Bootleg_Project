@@ -4,9 +4,9 @@ import android.util.Patterns
 import androidx.lifecycle.*
 import com.example.bootlegproject.data.AuthRepository
 import com.example.bootlegproject.data.Result
-
 import com.example.bootlegproject.R
 import kotlinx.coroutines.launch
+
 
 class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
@@ -29,9 +29,7 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
                     LoginResult(success = LoggedInUserView(email = loginJobCode.data.email))
                 else -> _loginResult.value = LoginResult(error = R.string.login_failed)
             }
-
         }
-
     }
 
     /**
