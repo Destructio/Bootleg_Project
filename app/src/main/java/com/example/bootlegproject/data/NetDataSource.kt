@@ -79,6 +79,28 @@ class NetDataSource {
             IOException("Error getting computers", e).toString()
         }
     }
+    fun computerStatisticRequest(computerName: String, email: String): String {
+
+        val url = "http://$WEB_IP/getJSON?computer=$computerName&email=$email"
+
+        val httpClient = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(url)
+            .build()
+
+        return try {
+            val response = httpClient.newCall(request).execute()
+            val code = response.body().string()
+            Log.d("-----------------", "$url ============= $code" )
+            if(!code.equals(null))
+                code
+            else
+                Exception("Wrong computer info data").toString()
+
+        } catch (e: Throwable) {
+            IOException("Error getting computer info", e).toString()
+        }
+    }
 
     fun logout() {
         // TODO: revoke authentication

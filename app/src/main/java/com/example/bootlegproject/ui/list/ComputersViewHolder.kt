@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bootlegproject.R
 import com.example.bootlegproject.data.model.Computer
 import com.example.bootlegproject.databinding.FragmentComputersBinding
+import com.google.gson.Gson
 
 class ComputersViewHolder(private val binding: FragmentComputersBinding)
     : RecyclerView.ViewHolder(binding.root) {
@@ -21,8 +22,10 @@ class ComputersViewHolder(private val binding: FragmentComputersBinding)
         binding.imageView.setImageResource(computerIcon)
 
         binding.root.setOnClickListener{
+            val gson = Gson()
             val bundle = Bundle()
-            bundle.putString("computerName",binding.name.text.toString())
+
+            bundle.putString("computer", gson.toJson(computer))
             bundle.putString("email", email)
             it.findNavController().navigate(R.id.action_computersFragment_to_computerInfoFragment,bundle)
         }

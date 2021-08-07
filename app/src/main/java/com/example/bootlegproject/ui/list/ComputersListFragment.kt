@@ -2,31 +2,20 @@ package com.example.bootlegproject.ui.list
 
 import android.os.Bundle
 import android.util.Log
-import org.koin.core.qualifier.named
-import org.koin.android.ext.android.get
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bootlegproject.adapters.ComputersRecyclerAdapter
-import com.example.bootlegproject.data.AuthRepository
 import com.example.bootlegproject.data.NetDataSource
 import com.example.bootlegproject.data.model.Computer
 import com.example.bootlegproject.databinding.FragmentComputersListBinding
-import com.example.bootlegproject.ui.login.LoginViewModel
-import com.example.bootlegproject.ui.login.LoginViewModelFactory
+import com.example.bootlegproject.ui.login.LoginResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.koin.androidx.scope.scopeActivity
+import kotlinx.coroutines.*
 import java.lang.reflect.Type
 
 /**
@@ -36,17 +25,8 @@ class ComputersFragment : Fragment() {
 
     private lateinit var computerListViewModel: ComputersListViewModel
     private lateinit var binding: FragmentComputersListBinding
-    private lateinit var computersList: ArrayList<Computer>
-    private val gson: Gson = Gson()
-    private val itemsListType = object : TypeToken<java.util.ArrayList<String>>() {}.type
+    private lateinit var dataLoad: Deferred<ArrayList<Computer>>
 
-    override fun onCreate(savedInstanceState: Bundle?){
-        super.onCreate(savedInstanceState)
-
-        //computersList = gson.fromJson(getComputersJobCode.toString(), itemsListType)
-        //getComputersJobCode.await()
-
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
     : View {
@@ -54,19 +34,38 @@ class ComputersFragment : Fragment() {
             .get(ComputersListViewModel::class.java)
 
         val email = arguments?.getString("email").toString()
-        computersList = computerListViewModel.getComputersList(email)
 
         binding = FragmentComputersListBinding.inflate(layoutInflater)
         //binding.progressBar.visibility = View.VISIBLE
         binding.recycler.layoutManager = LinearLayoutManager(context)
-        binding.recycler.adapter = ComputersRecyclerAdapter(computersList, email)
+
+        getComputersList(email)
 
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        //binding.progressBar.visibility = View.INVISIBLE
+    private fun getComputersList(email: String) {
+        val listType: Type = object : TypeToken<ArrayList<String>>() {}.type
+        val computerType: Type = object : TypeToken<Computer>() {}.type
+
+        lifecycleScope.launch(Dispatchers.Main) {
+
+            val job = async(Dispatchers.IO) {
+                val gson = Gson()
+                val computersList = ArrayList<Computer>()
+
+                val json = NetDataSource().computersRequest(email)
+
+                val arrayJsonList: ArrayList<String> = gson.fromJson(json, listType)
+                val size = arrayJsonList.size
+
+                for (i in 0 until size) {
+                    computersList.add(gson.fromJson(arrayJsonList[i], computerType))
+                }
+                computersList
+            }
+            binding.recycler.adapter = ComputersRecyclerAdapter(job.await(), email)
+        }
     }
 
 }
