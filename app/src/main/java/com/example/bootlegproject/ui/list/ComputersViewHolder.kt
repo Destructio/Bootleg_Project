@@ -1,11 +1,14 @@
 package com.example.bootlegproject.ui.list
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bootlegproject.R
 import com.example.bootlegproject.data.model.Computer
 import com.example.bootlegproject.databinding.FragmentComputersBinding
+import com.example.bootlegproject.ui.info.ComputerInfoActivity
 import com.google.gson.Gson
 
 class ComputersViewHolder(private val binding: FragmentComputersBinding)
@@ -27,7 +30,10 @@ class ComputersViewHolder(private val binding: FragmentComputersBinding)
 
             bundle.putString("computer", gson.toJson(computer))
             bundle.putString("email", email)
-            it.findNavController().navigate(R.id.action_computersFragment_to_computerInfoFragment,bundle)
+            val intent: Intent = Intent(it.context, ComputerInfoActivity::class.java)
+            intent.putExtra("computer", Gson().toJson(computer))
+            intent.putExtra("email", email)
+            startActivity(it.context,intent,null)
         }
     }
 

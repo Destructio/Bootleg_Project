@@ -35,18 +35,5 @@
             android:name="email"
             app:argType="string"
             android:defaultValue="no@email.com" />
-        <action
-            android:id="@+id/action_computersFragment_to_computerInfoFragment"
-            app:destination="@id/computerInfoFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/computerInfoFragment"
-        android:name="com.example.bootlegproject.ui.info.ComputerInfoFragment"
-        android:label="fragment_computer_info"
-        tools:layout="@layout/fragment_computer_info" >
-        <argument
-            android:name="computer"
-            app:argType="string" />
-        <argument android:name="email" />
     </fragment>
 </navigation>
