@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.example.bootlegproject.ui.signup.RegFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up">
+        <action
+            android:id="@+id/action_signUpFragment_to_computersFragment"
+            app:destination="@id/computersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.bootlegproject.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_computersFragment"
+            app:destination="@id/computersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/computersFragment"
+        android:name="com.example.bootlegproject.ui.list.ComputersFragment"
+        android:label="fragment_computers_list"
+        tools:layout="@layout/fragment_computers_list" >
+        <argument
+            android:name="email"
+            app:argType="string"
+            android:defaultValue="no@email.com" />
+    </fragment>
+</navigation>
