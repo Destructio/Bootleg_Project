@@ -10,6 +10,4 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
 import java.lang.reflect.Type
 
-class ComputersListViewModel : ViewModel() {
-
-}
+class ComputersListViewModel : ViewModel()

@@ -21,6 +21,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.lang.reflect.Type
 import java.util.*
+import com.example.bootlegproject.data.model.MyProcess
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import android.content.Intent
+
+
+
+
 
 class MyFragmentPagerAdapter(fm: FragmentManager, private var computerJSON: String, private val email: String) :
     FragmentStatePagerAdapter(fm) {
@@ -32,10 +39,10 @@ class MyFragmentPagerAdapter(fm: FragmentManager, private var computerJSON: Stri
     override fun getCount(): Int = 2
 
     override fun getPageTitle(position: Int): CharSequence {
-        var out = "PRIVET IZ 2018, TUT SKUCHNO I GRUSTNO"
+        var out = ""
         when (position) {
-            0 -> out = "Статистика"
-            1 -> out = "Характеристики"
+            0 -> out = "Характеристики"
+            1 -> out = "Статистика"
         }
         return out
     }
@@ -71,22 +78,44 @@ class MyFragment : Fragment() {
     }
 
     private fun detailComputerInfo(inflater: LayoutInflater, container: ViewGroup): View {
-        val fragmentViewL: View =
-            inflater.inflate(R.layout.fragment_copmuter_info_l, container, false)
+        val fragmentViewL: View = inflater.inflate(R.layout.fragment_copmuter_info_l, container, false)
         val text: TextView = fragmentViewL.findViewById(R.id.fragmentComputerInfoL_TextView)
+        val shareButton: FloatingActionButton = fragmentViewL.findViewById(R.id.floating)
         lifecycleScope.launch(Dispatchers.Main) {
             val task = async(Dispatchers.IO) {
                 val computerStatistic = NetDataSource().computerStatisticRequest(computer!!.computerName.toString(), email)
                 val statistic: ComputerStatistic = gson.fromJson(computerStatistic, statisticType)
                 statistic
             }
-            val info = task.await()
-            text.text = "CPU Temperature = " + info.cpuTemp.toString() +
-                    "\nRAM Usage = " + info.ramLoad.toString() +
-                    "\nCPU Load = " + info.cpuLoad.toString() +
-                    "%" + "\nHDD Load = " + info.hddLoad.toString() +
-                    "\nUPTIME = " + info.upTime.toString() +
-                    "\n Highest CPU usage = " + info.processList!![1].name
+            val statistic = task.await()
+            val process0: MyProcess = statistic.processList!![0]
+            val process1: MyProcess = statistic.processList[1]
+            val process2: MyProcess = statistic.processList[2]
+            val process3: MyProcess = statistic.processList[3]
+            val process4: MyProcess = statistic.processList[4]
+
+            text.text = "CPU Температура: " + statistic.cpuTemp
+                .toString() + "\nRAM Использование: " + statistic.ramLoad
+                .toString() + "\nCPU Использование: " + statistic.cpuLoad
+                .toString() + "%" + "\nHDD Загруженность: " + statistic.hddLoad
+                .toString() + "\nUPTIME: " + statistic.upTime
+                .toString() + "\nНаивысшая загруска CPU: " + statistic.processList[1].name.toString() + " " + statistic.processList[1].cpuload
+                .toString() + "%" + "\nПоследняя отправка статистики: " + statistic.date
+                .toString() + "\n\nСписок процессов:" + "\nPID: Имя: CPU: RAM:" + "\n1) " + process0.PID.toString() + " " + process0.name.toString() + " " + process0.cpuload.toString() + "% " + process0.RSS
+                .toString() + "\n2) " + process1.PID.toString() + " " + process1.name.toString() + " " + process1.cpuload.toString() + "% " + process1.RSS
+                .toString() + "\n3) " + process2.PID.toString() + " " + process2.name.toString() + " " + process2.cpuload.toString() + "% " + process2.RSS
+                .toString() + "\n4) " + process3.PID.toString() + " " + process3.name.toString() + " " + process3.cpuload.toString() + "% " + process3.RSS
+                .toString() + "\n5) " + process4.PID.toString() + " " + process4.name.toString() + " " + process4.cpuload.toString() + "% " + process4.RSS
+
+        }
+        shareButton.setOnClickListener {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, text.text)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
         }
         return fragmentViewL
     }

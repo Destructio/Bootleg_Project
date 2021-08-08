@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.example.bootlegproject.R
+import com.google.android.material.tabs.TabLayout
 
 class ComputerInfoActivity : FragmentActivity() {
 
@@ -16,5 +17,8 @@ class ComputerInfoActivity : FragmentActivity() {
         val email: String? = intent.getStringExtra("email")
         val pagerAdapter: PagerAdapter = MyFragmentPagerAdapter(supportFragmentManager, json!!, email!! )
         pager.adapter = pagerAdapter
+        val tabs: TabLayout = findViewById(R.id.tabs)
+        tabs.setupWithViewPager(pager)
+
     }
 }

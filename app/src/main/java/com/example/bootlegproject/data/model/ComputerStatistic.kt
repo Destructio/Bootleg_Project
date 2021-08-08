@@ -11,5 +11,6 @@ class ComputerStatistic {
     val processList: LinkedList<MyProcess>? = null
     val computerName: String? = null
     val upTime: String? = null
+    val date: String? = null
 
 }
