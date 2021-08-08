@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 
 class AuthRepository(val dataSource: NetDataSource) {
 
-    var user: LoggedInUser? = null
+    private var user: LoggedInUser? = null
         private set
 
     val isLoggedIn: Boolean

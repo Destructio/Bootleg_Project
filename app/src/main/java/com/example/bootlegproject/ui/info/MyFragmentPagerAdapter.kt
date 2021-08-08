@@ -50,10 +50,10 @@ class MyFragmentPagerAdapter(fm: FragmentManager, private var computerJSON: Stri
 
 class MyFragment : Fragment() {
     private val gson: Gson = Gson()
-    var position: Int? = null
-    var fragmentView: View? = null
-    var computerType: Type = object : TypeToken<Computer?>() {}.type
-    var statisticType: Type = object : TypeToken<ComputerStatistic?>() {}.type
+    private var position: Int? = null
+    private var fragmentView: View? = null
+    private var computerType: Type = object : TypeToken<Computer?>() {}.type
+    private var statisticType: Type = object : TypeToken<ComputerStatistic?>() {}.type
     private var computer: Computer? = null
     private var email: String = ""
 
